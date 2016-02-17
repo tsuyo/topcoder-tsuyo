@@ -1,0 +1,68 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class SmartWordToy {
+	int MAX = 26 * 26 * 26 * 26;
+	boolean[] visited = new boolean[MAX];
+	int[] dist = new int[MAX];
+
+	public int minPresses(String start, String finish, String[] forbid) {
+		for (String line : forbid) {
+			String[] fs = line.split(" ");
+			for (char c0 : fs[0].toCharArray()) {
+				for (char c1 : fs[1].toCharArray()) {
+					for (char c2 : fs[2].toCharArray()) {
+						for (char c3 : fs[3].toCharArray()) {
+							String tmp = "" + c0 + c1 + c2 + c3;
+							visited[toInt(tmp)] = true;
+						}
+					}
+				}
+			}
+		}
+
+		// start BFS
+		Queue<Integer> que = new LinkedList<Integer>();
+		int sti = toInt(start);
+		int fii = toInt(finish);
+		que.offer(sti);
+		visited[sti] = true;
+		while (!que.isEmpty()) {
+			int cur = que.poll();
+			if (cur == fii)
+				return dist[cur];
+			add(cur, que);
+		}
+		return -1; // not found
+	}
+
+	void add(int cur, Queue<Integer> que) {
+		for (int i = 0; i < 4; i++) {
+			int inc = (int) Math.pow(26, i + 1);
+			int diff = (int) Math.pow(26, i);
+			int lower = cur % inc;
+			int prev = (cur - lower) + (lower - diff + inc) % inc;
+			if (!visited[prev]) {
+				que.offer(prev);
+				visited[prev] = true;
+				dist[prev] = dist[cur] + 1;
+			}
+			int post = (cur - lower) + (lower + diff) % inc;
+			if (!visited[post]) {
+				que.offer(post);
+				visited[post] = true;
+				dist[post] = dist[cur] + 1;
+			}
+		}
+	}
+
+	int toInt(String state) {
+		int sum = 0;
+		int i = state.length() - 1;
+		for (char c : state.toCharArray()) {
+			sum += ((int) Math.pow(26, i--)) * (c - 'a');
+		}
+		return sum;
+	}
+
+}

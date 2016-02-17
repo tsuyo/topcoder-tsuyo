@@ -1,0 +1,57 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class GeneralChess {
+	int R = 10010;
+	int MAX = R * 2 + 1;
+	int[][] diff = { { 2, 1 }, { 2, -1 }, { 1, 2 }, { 1, -2 }, { -2, 1 },
+			{ -2, -1 }, { -1, 2 }, { -1, -2 } };
+
+	public String[] attackPositions(String[] pieces) {
+		Map<Integer, Integer> map = new TreeMap<Integer, Integer>();
+		for (String P : pieces) {
+			String[] cols = P.split(",");
+			int x = Integer.parseInt(cols[0]);
+			int y = Integer.parseInt(cols[1]);
+			for (int[] di : diff) {
+				int nx = x + di[0];
+				int ny = y + di[1];
+				// if (!range(nx, ny))
+				// continue;
+				int nxy = enc(nx, ny);
+				if (!map.containsKey(nxy))
+					map.put(nxy, 0);
+				map.put(nxy, map.get(nxy) + 1);
+			}
+		}
+		List<Integer> list = new ArrayList<Integer>();
+		for (int i : map.keySet()) {
+			if (map.get(i) == pieces.length) {
+				list.add(i);
+			}
+		}
+		Collections.sort(list);
+		String[] ret = new String[list.size()];
+		for (int i = 0; i < ret.length; i++) {
+			int[] xy = dec(list.get(i));
+			ret[i] = xy[0] + "," + xy[1];
+		}
+		return ret;
+	}
+
+	int enc(int x, int y) {
+		return (x + R) * MAX + (y + R);
+	}
+
+	int[] dec(int xy) {
+		return new int[] { xy / MAX - R, xy % MAX - R };
+	}
+
+	// boolean range(int x, int y) {
+	// return x >= -10000 && x <= 10000 && y >= -10000 && y <= 10000;
+	// }
+
+}

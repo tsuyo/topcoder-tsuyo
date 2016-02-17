@@ -1,0 +1,33 @@
+import static java.util.Arrays.*;
+import static java.lang.Math.*;
+
+import java.util.*;
+
+public class PowersOfTwo {
+
+	public long count(long[] powers) {
+		// Arrays.sort(powers);
+		PriorityQueue<Long> pq = new PriorityQueue<Long>();
+		pq.offer(0L);
+		for (long ll : powers)
+			pq.offer(ll);
+		Set<Long> set = new HashSet<Long>();
+		while (pq.size() >= 2) {
+			long a = pq.poll();
+			long b = pq.poll();
+			set.add(a);
+			set.add(b);
+			pq.add(a + b);
+		}
+		if (pq.size() == 1)
+		set.add(pq.poll());
+		debug(set);
+		
+		return set.size();
+	}
+	
+	void debug(Object... obj) {
+		System.err.println(Arrays.deepToString(obj));
+	}
+
+}

@@ -1,0 +1,47 @@
+import java.util.*;
+
+public class BracketExpressions {
+  String[] K = { "(", ")", "[", "]", "{", "}" };
+
+  public String ifPossible(String expression) {
+    for (int i1 = 0; i1 < 6; i1++) {
+      String expression1 = expression.replaceFirst("X", K[i1]);
+      for (int i2 = 0; i2 < 6; i2++) {
+        String expression2 = expression1.replaceFirst("X", K[i2]);
+        for (int i3 = 0; i3 < 6; i3++) {
+          String expression3 = expression2.replaceFirst("X", K[i3]);
+          for (int i4 = 0; i4 < 6; i4++) {
+            String expression4 = expression3.replaceFirst("X", K[i4]);
+            for (int i5 = 0; i5 < 6; i5++) {
+              String expression5 = expression4.replaceFirst("X", K[i5]);
+              if (exec(expression5)) return "possible";
+            }
+          }
+        }
+      }
+    }
+    return "impossible";
+  }
+
+  boolean exec(String expression) {
+    char[] chs = expression.toCharArray();
+    Stack<Character> stack = new Stack<Character>();
+    for (int i = 0; i < chs.length; i++) {
+      switch (chs[i]) {
+      case ')':
+        if (stack.size() == 0 || stack.pop() != '(') return false;
+        break;
+      case ']':
+        if (stack.size() == 0 || stack.pop() != '[') return false;
+        break;
+      case '}':
+        if (stack.size() == 0 || stack.pop() != '{') return false;
+        break;
+      default:
+        stack.push(chs[i]);
+      }
+    }
+    return (stack.size() == 0);
+  }
+
+}

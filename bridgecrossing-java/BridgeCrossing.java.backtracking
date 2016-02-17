@@ -1,0 +1,82 @@
+import static java.lang.Math.*;
+import static java.util.Arrays.*;
+
+import java.util.*;
+
+public class BridgeCrossing {
+	int N;
+	int MAX;
+	Integer[] a1, a2;
+	int[] all;
+	int[] T;
+	int minCost = Integer.MAX_VALUE;
+
+	public int minTime(int[] times) {
+		T = times;
+		N = times.length;
+		MAX = (1 << N);
+		init();
+		all = new int[MAX];
+
+		if (N == 1)
+			return times[0];
+		// format: <start N bits> e.g.) 1001 means #0,3 remains start point
+		// 1111 -> 1001 -> 1101 (0,2,1,3,2,4)
+		int initState = MAX - 1;
+		findMinCost(initState, true, 0);
+		return minCost;
+	}
+
+	void findMinCost(int state, boolean gotoGoal, int cost) {
+		if (state == 0) { // finish
+			minCost = min(minCost, cost);
+			return;
+		}
+		int start = state;
+		int goal = ~state & (MAX - 1);
+		if (gotoGoal) {
+			for (int i : a2) {
+				if ((start & i) == i) {
+					findMinCost(~i & start, !gotoGoal, cost + cost(i));
+				}
+			}
+		} else {
+			for (int i : a1) {
+				if ((goal & i) == i) {
+					findMinCost(i | start, !gotoGoal, cost + cost(i));
+				}
+			}
+		}
+		return;
+	}
+
+	int cost(int i) {
+		int cost = Integer.MIN_VALUE;
+		for (int j = 0; j < N; j++) {
+			if (((i >> j) & 1) == 1) {
+				cost = max(cost, T[j]);
+			}
+		}
+		return cost;
+	}
+
+	void init() {
+		List<Integer> list1 = new ArrayList<Integer>();
+		List<Integer> list2 = new ArrayList<Integer>();
+		for (int i = 0; i < MAX; i++) {
+			int bcnt = Integer.bitCount(i);
+			if (bcnt == 1) {
+				list1.add(i);
+			} else if (bcnt == 2) { // find 2 bits
+				list2.add(i);
+			}
+		}
+		a1 = list1.toArray(new Integer[0]);
+		a2 = list2.toArray(new Integer[0]);
+	}
+
+	void debug(Object... os) {
+		System.err.println(deepToString(os));
+	}
+
+}

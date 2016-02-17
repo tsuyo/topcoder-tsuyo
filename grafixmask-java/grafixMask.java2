@@ -1,0 +1,71 @@
+import java.util.*;
+
+public class grafixMask {
+  int[][] bad;
+  boolean[][] visited = new boolean[400][600];
+
+  public int[] sortedAreas(String[] rectangles) {
+    bad = new int[rectangles.length][4];
+    for (int i = 0; i < bad.length; i++) {
+      String[] tmp = rectangles[i].split(" ");
+      for (int j = 0; j < 4; j++) {
+        bad[i][j] = Integer.parseInt(tmp[j]);
+      }
+    }
+
+    // start dfs
+    List<Integer> list = new ArrayList<Integer>();
+    for (int r = 0; r < 400; r++) {
+      for (int c = 0; c < 600; c++) {
+        if (ok(r, c) && !visited[r][c]) {
+          list.add(bfs(r, c));
+          // list.add(dfs(r, c));
+        }
+      }
+    }
+    Collections.sort(list);
+    int[] ans = new int[list.size()];
+    for (int i = 0; i < ans.length; i++) {
+      ans[i] = list.get(i);
+    }
+    return ans;
+  }
+
+  int bfs(int r, int c) {
+    Queue<int[]> que = new LinkedList<int[]>();
+    que.offer(new int[] { r, c });
+    int sum = 0;
+    while (!que.isEmpty()) {
+      int[] cur = que.poll();
+      int cr = cur[0], cc = cur[1];
+      if (!ok(cr, cc) || visited[cr][cc]) continue;
+      visited[cr][cc] = true;
+      sum++;
+      que.offer(new int[] { cr - 1, cc });
+      que.offer(new int[] { cr + 1, cc });
+      que.offer(new int[] { cr, cc - 1 });
+      que.offer(new int[] { cr, cc + 1 });
+    }
+    return sum;
+  }
+
+  // int dfs(int r, int c) {
+  // if (!ok(r, c) || visited[r][c]) return 0;
+  // visited[r][c] = true;
+  // return 1 + dfs(r - 1, c) + dfs(r + 1, c) + dfs(r, c - 1) + dfs(r, c + 1);
+  // }
+
+  boolean ok(int r, int c) {
+    if (r < 0 || r >= 400 || c < 0 || c >= 600) return false;
+    for (int i = 0; i < bad.length; i++) {
+      if (bad[i][0] <= r && r <= bad[i][2] && bad[i][1] <= c && c <= bad[i][3])
+        return false;
+    }
+    return true;
+  }
+
+  void debug(Object... obj) {
+    System.err.println(Arrays.deepToString(obj));
+  }
+
+}

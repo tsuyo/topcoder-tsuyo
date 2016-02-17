@@ -1,0 +1,29 @@
+import static java.util.Arrays.*;
+import static java.lang.Math.*;
+
+import java.util.*;
+
+public class BishopMove {
+
+  public int howManyMoves(int r1, int c1, int r2, int c2) {
+    if (r1 == r2 && c1 == c2) return 0;
+    if (Math.abs(r1 - r2) == Math.abs(c1 - c2)) return 1;
+
+    int[][] D = { { 1, 1 }, { 1, -1 }, { -1, 1 }, { -1, -1 } };
+    for (int k = 1; k < 8; k++) {
+      for (int[] d : D) {
+        int nr = r1 + d[0] * k;
+        if (!check(nr)) continue;
+        int nc = c1 + d[1] * k;
+        if (!check(nc)) continue;
+        if (Math.abs(nr - r2) == Math.abs(nc - c2)) return 2;
+      }
+    }
+    return -1;
+  }
+  
+  boolean check(int n) {
+    return 0 <= n && n <= 7;
+  }
+
+}
